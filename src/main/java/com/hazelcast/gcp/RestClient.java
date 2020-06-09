@@ -26,6 +26,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Utility class for making REST calls.
@@ -38,6 +39,8 @@ final class RestClient {
     private final String url;
     private final List<Header> headers = new ArrayList<Header>();
     private String body;
+    private int readTimeoutSeconds;
+    private int connectTimeoutSeconds;
 
     private RestClient(String url) {
         this.url = url;
@@ -54,6 +57,16 @@ final class RestClient {
 
     RestClient withBody(String body) {
         this.body = body;
+        return this;
+    }
+
+    RestClient withReadTimeoutSeconds(int readTimeoutSeconds) {
+        this.readTimeoutSeconds = readTimeoutSeconds;
+        return this;
+    }
+
+    RestClient withConnectTimeoutSeconds(int connectTimeoutSeconds) {
+        this.connectTimeoutSeconds = connectTimeoutSeconds;
         return this;
     }
 
@@ -75,6 +88,8 @@ final class RestClient {
             for (Header header : headers) {
                 connection.setRequestProperty(header.getKey(), header.getValue());
             }
+            connection.setReadTimeout((int) TimeUnit.SECONDS.toMillis(readTimeoutSeconds));
+            connection.setConnectTimeout((int) TimeUnit.SECONDS.toMillis(connectTimeoutSeconds));
             if (body != null) {
                 byte[] bodyData = body.getBytes("UTF-8");
 

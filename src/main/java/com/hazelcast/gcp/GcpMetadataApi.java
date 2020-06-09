@@ -58,7 +58,12 @@ class GcpMetadataApi {
 
     boolean isAccessible() {
         try {
-            callGet(endpoint);
+            int timeoutSeconds = 2;
+            RestClient.create(endpoint)
+                      .withHeader("Metadata-Flavor", "Google")
+                      .withConnectTimeoutSeconds(timeoutSeconds)
+                      .withReadTimeoutSeconds(timeoutSeconds)
+                      .get();
             return true;
         } catch (Exception e) {
             return false;
