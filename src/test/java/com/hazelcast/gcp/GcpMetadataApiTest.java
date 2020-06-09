@@ -27,6 +27,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class GcpMetadataApiTest {
     private static final String PROJECT = "project-1";
@@ -88,6 +89,20 @@ public class GcpMetadataApiTest {
     private static String zoneResponse(String zone) {
         String sampleProjectId = "183928891381";
         return String.format("projects/%s/zones/%s", sampleProjectId, zone);
+    }
+
+    @Test
+    public void isAccessible() {
+        // given
+        stubFor(get(urlEqualTo("/"))
+                .withHeader("Metadata-Flavor", equalTo("Google"))
+                .willReturn(aResponse().withStatus(200).withBody("0.1/\n" + "computeMetadata/")));
+
+        // when
+        boolean result = gcpMetadataApi.isAccessible();
+
+        // then
+        assertTrue(result);
     }
 
     @Test

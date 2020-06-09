@@ -56,6 +56,15 @@ class GcpMetadataApi {
         return currentZone().substring(0, index);
     }
 
+    boolean isAccessible() {
+        try {
+            callGet(endpoint);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     String accessToken() {
         String urlString = String.format("%s/computeMetadata/v1/instance/service-accounts/default/token", endpoint);
         String accessTokenResponse = callGet(urlString);

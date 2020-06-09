@@ -50,4 +50,14 @@ public class GcpDiscoveryStrategyFactory
         }
         return result;
     }
+
+    @Override
+    public boolean isApplicableToCurrentEnvironment() {
+        return new GcpMetadataApi().isAccessible();
+    }
+
+    @Override
+    public DiscoveryStrategyLevel discoveryStrategyLevel() {
+        return DiscoveryStrategyLevel.CLOUD_VM;
+    }
 }
